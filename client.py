@@ -1,5 +1,4 @@
-import protocols.transport as tr
-from protocols.session import DHEndpoint
+import transport.transport as tr
 import sys
 
 
@@ -10,6 +9,6 @@ if __name__ == "__main__":
     msg = tr.recv(trans_handler)
     print(msg)
 
-    tr.send(trans_handler, "Hello UDP Server.")
+    tr.sendto(trans_handler, "Hello UDP Server.")
     msg_new = tr.recv(trans_handler)
     print(msg_new)
