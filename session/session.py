@@ -1,4 +1,4 @@
-class DHEndpoint:
+class DH_Endpoint(object):
     def __init__(self, public_key1, public_key2, private_key):
         self.public_key1 = public_key1
         self.public_key2 = public_key2
@@ -30,6 +30,38 @@ class DHEndpoint:
             decrypted_msg += chr(ord(c) - key)
         return encrypted_msg
 
+
+class Session:
+    def __init__(self, tr, trans_handler, my_public, his_public, private, type):
+        self.tr = tr
+        self.trans_handler = trans_handler
+        self.my_public = my_public
+        self.private = private
+        self.create = DH_Endpoint(my_public, his_public, private)
+        self.partial = self.create.generate_partial_key()
+        self.tr.send(self.trans_handler, str(self.partial))
+        self.his_partial = int(self.tr.recv(self.trans_handler))
+        self.full = self.create.generate_full_key(self.his_partial)
+        self.type = type
+
+    def communicate(self, msg):
+        if self.type == 'client':
+            self.secureSend(msg)
+            response = self.secureRecieve()
+            return response
+        else:
+            response = self.secureRecieve()
+            self.secureSend(msg)
+            return response
+
+
+    def secureSend(self, msg):
+        self.encrypted = self.create.encrypt_message(msg)
+        self.tr.send(self.trans_handler, msg)
+
+    def secureRecieve(self):
+        self.message = self.create.decrypt_message(self.tr.recv(self.trans_handler))
+        return self.message
 
 
 

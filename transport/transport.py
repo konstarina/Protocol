@@ -1,7 +1,6 @@
 import hashlib
 import socket as skt
 import json
-import random
 
 bufferSize = 1024
 
@@ -24,7 +23,7 @@ def server_socket(localIP, localPort):
 
 def connect_to(sock, localIP, localPort):
     sock.to_addr = (localIP, localPort)
-    sendto(sock, "Connected")
+    send(sock, "Connected")
     print("Connected on " + str(localIP) + ":" + str(localPort))
     return sock
 
@@ -37,7 +36,7 @@ def valid(des_packet):
     return des_packet["cksm"] == hashlib.md5(des_packet["payload"].encode("utf-8")).hexdigest()
 
 
-def sendto(sock, msg):
+def send(sock, msg):
     sock.sock.sendto(make_packet(msg), sock.to_addr)
     data, addr = sock.sock.recvfrom(bufferSize)
     packet = json.loads(data.decode("utf-8"))
@@ -45,8 +44,6 @@ def sendto(sock, msg):
     while packet["payload"] == "nack":
         sock.sock.sendto(make_packet(msg), sock.to_addr)
         [data, addr] = sock.sock.recvfrom(bufferSize)
-    print("The message is not delivered.")
-    return
 
 
 def recv(sock):
@@ -54,7 +51,7 @@ def recv(sock):
         data, addr = sock.sock.recvfrom(bufferSize)
         packet = json.loads(data.decode("utf-8"))
 
-        if valid(packet) and random.random() > 0.5:
+        if valid(packet):
             # print("The packet is acknowledged.")
             sock.sock.sendto(make_packet("ack"), addr)
             if packet["payload"] == "Connected":
