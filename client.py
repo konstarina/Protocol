@@ -10,7 +10,7 @@ if __name__ == "__main__":
     trans_handler = tr.socket()
     tr.connect_to(trans_handler, "127.0.0.1", int(sys.argv[1]))
 
-    app = application.App(tr, trans_handler, my_public, his_public, my_private, 'client')
+    app = application.App(tr, trans_handler, my_public, his_public, my_private, 'client', "message")
     app.communicate("Hello")
     message = app.communicate()
 

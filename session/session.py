@@ -1,4 +1,4 @@
-class DH_Endpoint(object):
+class DiffieHellman(object):
     def __init__(self, public_key1, public_key2, private_key):
         self.public_key1 = public_key1
         self.public_key2 = public_key2
@@ -32,12 +32,15 @@ class DH_Endpoint(object):
 
 
 class Session:
-    def __init__(self, tr, trans_handler, my_public, his_public, private, type):
+    def __init__(self, tr, trans_handler, my_public, his_public, private, type, msg):
+        self.encrypted = self.create.encrypt_message(msg)
+        self.message = self.create.decrypt_message(self.tr.recv(self.trans_handler))
+        self.msg = msg
         self.tr = tr
         self.trans_handler = trans_handler
         self.my_public = my_public
         self.private = private
-        self.create = DH_Endpoint(my_public, his_public, private)
+        self.create = DiffieHellman(my_public, his_public, private)
         self.partial = self.create.generate_partial_key()
         self.tr.send(self.trans_handler, str(self.partial))
         self.his_partial = int(self.tr.recv(self.trans_handler))
@@ -47,7 +50,7 @@ class Session:
     def communicate(self, msg):
         if self.type == 'client':
             self.secureSend(msg)
-            response = self.secureRecieve()
+            response = self.secureReceive()
             return response
         else:
             response = self.secureRecieve()
@@ -56,11 +59,9 @@ class Session:
 
 
     def secureSend(self, msg):
-        self.encrypted = self.create.encrypt_message(msg)
         self.tr.send(self.trans_handler, msg)
 
     def secureRecieve(self):
-        self.message = self.create.decrypt_message(self.tr.recv(self.trans_handler))
         return self.message
 
 

@@ -1,5 +1,5 @@
 import transport.transport as tr
-import application.application
+from application.application import App
 import sys
 
 
@@ -10,13 +10,13 @@ if __name__ == "__main__":
     his_public = 151
     my_private = 199
 
-    app = application.App(tr, server_handler, my_public, his_public, my_private, 'server')
-    app.communicate()
+    app = App(tr, server_handler, my_public, his_public, my_private, 'server')
+    app.communicate("Hello UDP Client")
 
-    msg = "Hello UDP Client!"
-    tr.send(server_handler, msg)
-    msg = tr.recv(server_handler)
-    print(msg)
+    # msg = "Hello UDP Client!"
+    # tr.send(server_handler, msg)
+    # msg = tr.recv(server_handler)
+    # print(msg)
 
     tr.send(server_handler, "How are you doing?")
     msg_new = tr.recv(server_handler)
