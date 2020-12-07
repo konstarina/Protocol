@@ -57,4 +57,6 @@ class App:
         self.session.communicate(msg)
 
 ```
-It 
+It uses the previously stated methods on the application.py layer, 
+the client and the server exchange encrypted messages (to show the decryption process - will show it in screenshots)
+
